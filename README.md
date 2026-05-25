@@ -2,7 +2,7 @@
 ## Phase 1 
 22:34 25/05/2026 
 基本的な機能のみを搭載したマッチングエンジンの試作
-Prototype of a matching engine equipped with only basic functions
+<br>Prototype of a matching engine equipped with only basic functions
 
 Benchmark
 
