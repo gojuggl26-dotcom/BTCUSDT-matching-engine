@@ -8,4 +8,5 @@ pub mod types;
 pub use engine::MatchingEngine;
 pub use order::{Order, OrderType, Side, Trade};
 pub use orderbook::OrderBook;
-pub use types::{OrderId, Price, Quantity};
+pub use engine::{ExecStatus, ExecutionReport, MatchingEngine};
+pub use types::{OrderId, Price, Quantity, Timestamp};
