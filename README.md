@@ -58,7 +58,6 @@ Benchmark
 
 | 項目 | 設定値 / 環境 | 最適化の目的 |
 | :--- | :--- | :--- |
-| 項目 | 設定値 / 環境 | 最適化の目的 |
 | 実行環境 (Execution Environment) | 各自の環境に依存 | 測定ベースの統一 |
 | CPUコア固定 | taskset -c 2 (Core 2 に固定) | OSスケジューラによるスレッド移動・遅延の排除 |
 | NUMAノード固定 | numactl --cpunodebind=0 --membind=0 | リモートメモリへのアクセス（NUMAミス）の完全防御 |
