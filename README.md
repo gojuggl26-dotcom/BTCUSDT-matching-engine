@@ -47,6 +47,7 @@ Benchmark
 * OS / Environment: WSL2 (Ubuntu) on Windows
 * Hardware: AMD/Intel CPU (Laptop: ASUS Zenbook series)
 * Runner: cargo bench (Criterion.rs backend)
+* NUMAノードが一つのみ
 
 ### AI使用について
 #### AIを以下の用途で使用しました。
