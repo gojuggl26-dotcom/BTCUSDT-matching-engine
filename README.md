@@ -29,7 +29,14 @@ Benchmark
 | sweep_10_levels (10価格帯の全消費) | 798.77 ns | 917.08 ns | +14.8% |
 | limit_resting (指値注文の板乗り) | 141.29 ns | 570.80 ns | +304.0% |
 
+---
 
+| 項目 | 内容 |
+| :--- | :--- |
+| 深い板の規模 | 買い10万件 + 売り10万件 = 計〜50MB（L3キャッシュを超える） |
+| 価格配置 | 深い板は 4M〜4.1M（買い）と 6M〜6.1M（売り）、計測対象は 5M 付近のスプレッド内 |
+| iter_custom | full_match/sweep/cancel はセットアップ（補充）時間を計測から完全に除外 |
+| limit_resting_deep | 1000価格サイクルで BTreeMap の新規ノード挿入・既存ノード追記を混在させる |
 ###  動作環境 (Environment)
 * OS / Environment: WSL2 (Ubuntu) on Windows
 * Hardware: AMD/Intel CPU (Laptop: ASUS Zenbook series)
