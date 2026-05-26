@@ -10,8 +10,7 @@ Benchmark
 
 ##  ベンチマーク結果 (Performance Benchmarks)
 
-本マッチングエンジンは、Rustのマイクロベンチマークフレームワーク Criterion を使用し、WSL2環境下で性能測定を行いました。すべてのコアロジックにおいて、ナノ秒（ns）単位の超低遅延・高スループットを達成しています。
-
+本マッチングエンジンは、Rustのマイクロベンチマークフレームワーク Criterion を使用し、WSL2環境下で性能測定を行いました。
 ###  測定結果サマリー
 
 | 処理内容 (Benchmark) | 平均処理時間 (Mean Time) | 信頼区間 (95% Confidence Interval) | 推定スループット (Estimated Throughput) |
