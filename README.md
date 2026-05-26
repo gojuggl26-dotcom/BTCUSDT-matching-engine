@@ -22,6 +22,13 @@ Benchmark
 
 ---
 
+| 処理内容 (Benchmark) | 通常時 平均 (Normal Mean) | 高負荷時 平均 (Deep Mean) | 処理遅延の増加率 |
+| :--- | :--- | :--- | :--- |
+| full_match (完全合致の約定) | 125.45 ns | 183.28 ns | +46.1% |
+| cancel (注文のキャンセル) | 153.77 ns | 153.90 ns | +0.08% (ほぼ影響なし) |
+| sweep_10_levels (10価格帯の全消費) | 798.77 ns | 917.08 ns | +14.8% |
+| limit_resting (指値注文の板乗り) | 141.29 ns | 570.80 ns | +304.0% |
+
 
 ###  動作環境 (Environment)
 * OS / Environment: WSL2 (Ubuntu) on Windows
