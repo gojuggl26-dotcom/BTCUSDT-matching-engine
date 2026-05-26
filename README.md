@@ -43,6 +43,17 @@ Benchmark
 * Cancel耐性あり。
 * 板が深いと根からの探索でキャッシュミスを起こす。
 
+###  動作環境 (Environment)
+* OS / Environment: WSL2 (Ubuntu) on Windows
+* Hardware: AMD/Intel CPU (Laptop: ASUS Zenbook series)
+* Runner: cargo bench (Criterion.rs backend)
+* NUMAノードが一つのみ
+
+### AI使用について
+#### AIを以下の用途で使用しました。
+* 各ファイルのボイラープレート記述
+* engine_benches.rsファイルの記述
+* 
 ### 実行環境２
 
 | 項目 | 設定値 / 環境 | 最適化の目的 |
@@ -62,14 +73,4 @@ Benchmark
 | `cancel` (注文取消) | 133.04 ns | 123.57 ns | -9.47 ns | メモリ最適化（アリーナ/Slab等）が完璧に機能。 |
 | `sweep_10_levels` (10価格連続約定) | 765.50 ns | 896.44 ns | +130.94 ns | 連続ループ処理が入っても 1μs 未満を死守。 |
 
-###  動作環境 (Environment)
-* OS / Environment: WSL2 (Ubuntu) on Windows
-* Hardware: AMD/Intel CPU (Laptop: ASUS Zenbook series)
-* Runner: cargo bench (Criterion.rs backend)
-* NUMAノードが一つのみ
-
-### AI使用について
-#### AIを以下の用途で使用しました。
-* 各ファイルのボイラープレート記述
-* engine_benches.rsファイルの記述
 
