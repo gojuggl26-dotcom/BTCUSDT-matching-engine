@@ -25,7 +25,7 @@ Benchmark
 | 処理内容 (Benchmark) | 通常時 平均 (Normal Mean) | 高負荷時 平均 (Deep Mean) | 処理遅延の増加率 |
 | :--- | :--- | :--- | :--- |
 | full_match (完全合致の約定) | 125.45 ns | 183.28 ns | +46.1% |
-| cancel (注文のキャンセル) | 153.77 ns | 153.90 ns | +0.08% (ほぼ影響なし) |
+| cancel (注文のキャンセル) | 153.77 ns | 153.90 ns | +0.08%  |
 | sweep_10_levels (10価格帯の全消費) | 798.77 ns | 917.08 ns | +14.8% |
 | limit_resting (指値注文の板乗り) | 141.29 ns | 570.80 ns | +304.0% |
 
@@ -37,6 +37,12 @@ Benchmark
 | 価格配置 | 深い板は 4M〜4.1M（買い）と 6M〜6.1M（売り）、計測対象は 5M 付近のスプレッド内 |
 | iter_custom | full_match/sweep/cancel はセットアップ（補充）時間を計測から完全に除外 |
 | limit_resting_deep | 1000価格サイクルで BTreeMap の新規ノード挿入・既存ノード追記を混在させる |
+
+### 結果分析
+* limit-resting項目が大幅に遅延している。Btree-mapのキャッシュミス？の可能性。連続行列の使用を検討。
+* Cancel耐性あり。
+* 板が深いと根からの探索でキャッシュミスを起こす。
+
 ###  動作環境 (Environment)
 * OS / Environment: WSL2 (Ubuntu) on Windows
 * Hardware: AMD/Intel CPU (Laptop: ASUS Zenbook series)
