@@ -8,11 +8,24 @@ Benchmark
 <br>キャンセルオーダーのレイテンシが目立つ.
 <br>スウィープもレイテンシ削減の余地あり
 
-|  操作	|  現在	|  目標 (Phase 2)	|  ボトルネック  |
-|-------|-------|-----------------|---------------|
-|limit resting |	132 ns|	< 80 ns |	BTreeMap挿入 |
-|full match (1 level)	| 207 ns | < 120 ns  |	Trade Vec alloc |
-| sweep 10 levels	| 1.83 µs |	< 600 ns	| BTreeMap per-level |
-| cancel (100 orders)	| 10.2 µs | < 200 ns	| VecDeque 線形探索 |
-| cancel (1000 orders) | 101 µs |	< 300 ns | VecDeque O(n) scan |
+##  ベンチマーク結果 (Performance Benchmarks)
+
+本マッチングエンジンは、Rustのマイクロベンチマークフレームワーク Criterion を使用し、WSL2環境下で性能測定を行いました。すべてのコアロジックにおいて、ナノ秒（ns）単位の超低遅延・高スループットを達成しています。
+
+###  測定結果サマリー
+
+| 処理内容 (Benchmark) | 平均処理時間 (Mean Time) | 信頼区間 (95% Confidence Interval) | 推定スループット (Estimated Throughput) |
+| :--- | :--- | :--- | :--- |
+| full_match <br> (完全合致注文の約定) | 131.30 ns | 127.11 ns 〜 135.89 ns | 約 761 万件 / 秒 |
+| cancel <br> (注文のキャンセル処理) | 146.57 ns | 142.35 ns 〜 150.82 ns | 約 682 万件 / 秒 |
+| limit_resting <br> (指値注文の板乗り/Resting) | 174.56 ns | 164.23 ns 〜 186.66 ns | 約 572 万件 / 秒 |
+| sweep_10_levels <br> (10価格レベルにまたがる板の全消費) | 963.30 ns | 937.02 ns 〜 987.78 ns | 約 103 万件 / 秒 |
+
+---
+
+
+### 🛠️ 動作環境 (Environment)
+* OS / Environment: WSL2 (Ubuntu) on Windows
+* Hardware: AMD/Intel CPU (Laptop: ASUS Zenbook series)
+* Runner: cargo bench (Criterion.rs backend)
 
