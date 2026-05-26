@@ -43,6 +43,25 @@ Benchmark
 * Cancel耐性あり。
 * 板が深いと根からの探索でキャッシュミスを起こす。
 
+### 実行環境２
+
+| 項目 | 設定値 / 環境 | 最適化の目的 |
+| :--- | :--- | :--- |
+| 項目 | 設定値 / 環境 | 最適化の目的 |
+| 実行環境 (Execution Environment) | 各自の環境に依存 | 測定ベースの統一 |
+| CPUコア固定 | taskset -c 2 (Core 2 に固定) | OSスケジューラによるスレッド移動・遅延の排除 |
+| NUMAノード固定 | numactl --cpunodebind=0 --membind=0 | リモートメモリへのアクセス（NUMAミス）の完全防御 |
+| ビルドプロファイル | release (opt-level = 3, LTO有効) | コンパイラによるインライン化と極限最適化 |
+
+---
+
+| 処理（ホットパス） | 通常時の平均遅延 (`ns`) | 深い板 (`_deep`) での平均遅延 (`ns`) | 差分 (`ns`) | アルゴリズム性能評価 |
+| :--- | :---: | :---: | :---: | :--- |
+| `limit_resting` (指値板乗り) | 138.41 ns | 572.79 ns | +434.38 ns | 板が厚くなっても 0.5μs 帯。構成上許容範囲内。 |
+| `full_match` (完全約定) | 126.80 ns | 156.83 ns | +30.03 ns | 驚異的な安定性。 データ量に影響されない $O(1)$ を維持。 |
+| `cancel` (注文取消) | 133.04 ns | 123.57 ns | -9.47 ns | メモリ最適化（アリーナ/Slab等）が完璧に機能。 |
+| `sweep_10_levels` (10価格連続約定) | 765.50 ns | 896.44 ns | +130.94 ns | 連続ループ処理が入っても 1μs 未満を死守。 |
+
 ###  動作環境 (Environment)
 * OS / Environment: WSL2 (Ubuntu) on Windows
 * Hardware: AMD/Intel CPU (Laptop: ASUS Zenbook series)
