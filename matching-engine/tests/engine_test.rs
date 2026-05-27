@@ -1,38 +1,64 @@
-//! MatchingEngine の統合テスト
+use matching_engine::*;
 
-mod common;
-
-use common::{limit_order, market_order};
-use matching_engine::{ExecStatus, MatchingEngine, OrderType, Side};
-
-#[test]
-fn side_opposite_unit_smoke() {
-    assert_eq!(Side::Buy.opposite(), Side::Sell);
+fn order(id: u64, side: Side, ot: OrderType, price: i64, qty: u64, ts: u64) -> Order {
+    Order {
+        id: OrderId(id),
+        side,
+        order_type: ot,
+        price: Price(price),
+        quantity: Quantity(qty),
+        timestamp: Timestamp(ts),
+    }
 }
 
 #[test]
-#[ignore = "engine / orderbook の実装がコンパイル可能になったら外す"]
-fn market_buy_matches_resting_sell() {
-    let mut engine = MatchingEngine::new();
-
-    let sell = limit_order(1, Side::Sell, 5_010_000, 50_000_000, 1);
-    let r = engine.submit(sell);
+//指値が板に残る場合
+fn limit_resting() {
+    let mut e = MatchingEngine::new();
+    let r = e.submit(order(1, Side::Buy, OrderType::Limit, 5_000_000, 100, 1));
     assert_eq!(r.status, ExecStatus::Resting);
-
-    let buy = market_order(2, Side::Buy, 30_000_000, 2);
-    let r = engine.submit(buy);
-    assert!(!r.trades.is_empty());
-    assert_eq!(r.trades[0].quantity.0, 30_000_000);
+    assert_eq!(e.book().best_bid(), Some(Price(5_000_000)));
 }
 
 #[test]
-#[ignore = "engine / orderbook の実装がコンパイル可能になったら外す"]
-fn limit_buy_does_not_cross_low_ask() {
-    let mut engine = MatchingEngine::new();
-
-    engine.submit(limit_order(1, Side::Sell, 5_010_000, 10, 1));
-    let r = engine.submit(limit_order(2, Side::Buy, 5_000_000, 5, 2));
-
-    assert_eq!(r.status, ExecStatus::Resting);
-    assert!(r.trades.is_empty());
+//同じ価格、同じ注文量の場合
+fn full_match_at_same_price() {
+    let mut e = MatchingEngine::new();
+    e.submit(order(1, Side::Sell, OrderType::Limit, 5_000_000, 100, 1));
+    let r = e.submit(order(2, Side::Buy, OrderType::Limit, 5_000_000, 100, 2));
+    assert_eq!(r.status, ExecStatus::Filled);
+    assert_eq!(r.trades.len(), 1);
+    assert_eq!(r.trades[0].price, Price(5_000_000));
 }
+
+#[test]
+//注文の順番　二つの注文が並んでいる場合
+fn time_priority_within_level() {
+    let mut e = MatchingEngine::new();
+    e.submit(order(1, Side::Sell, OrderType::Limit, 5_000_000, 100, 1));
+    e.submit(order(2, Side::Sell, OrderType::Limit, 5_000_000, 100, 2));
+    let r = e.submit(order(3, Side::Buy, OrderType::Limit, 5_000_000, 100, 3));
+    assert_eq!(r.trades[0].maker_order_id, OrderId(1));
+}
+
+#[test]
+//テイカー注文が複数のメイカー注文を食う場合
+fn sweep_multiple_levels() {
+    let mut e = MatchingEngine::new();
+    e.submit(order(1, Side::Sell, OrderType::Limit, 5_000_000, 50, 1));
+    e.submit(order(2, Side::Sell, OrderType::Limit, 5_000_100, 50, 2));
+    let r = e.submit(order(3, Side::Buy, OrderType::Limit, 5_000_200, 100, 3));
+    assert_eq!(r.status, ExecStatus::Filled);
+    assert_eq!(r.trades.len(), 2);
+}
+
+#[test]
+//削除テスト
+fn cancel_works() {
+    let mut e = MatchingEngine::new();
+    e.submit(order(1, Side::Buy, OrderType::Limit, 5_000_000, 100, 1));
+    let canceled = e.cancel(OrderId(1));
+    assert!(canceled.is_some());
+    assert_eq!(e.book().best_bid(), None);
+}
+

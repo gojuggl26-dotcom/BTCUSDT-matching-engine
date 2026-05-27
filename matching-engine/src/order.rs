@@ -1,7 +1,6 @@
 use crate::types::{OrderId, Price, Quantity, Timestamp};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Side {
     Buy,
     Sell,

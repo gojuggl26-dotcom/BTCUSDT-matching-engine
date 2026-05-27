@@ -16,4 +16,9 @@ path = "src/main.rs"
 # Phase 2 で fxhash, crossbeam, parking_lot などを追加予定
 
 [dev-dependencies]
-# 統合テスト（tests/*.rs）用。現時点では標準ライブラリのみ。
+criterion = "0.5"
+
+[[bench]]
+name = "engine_benches"
+path = "tests/engine_benches.rs"
+harness = false
