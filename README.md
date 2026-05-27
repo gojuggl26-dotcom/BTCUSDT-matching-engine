@@ -89,6 +89,13 @@ Benchmark
 | `sweep_10_levels_deep`| 895.39 ns | 板の深い位置における10レベルスウィープ |
 | `cancel_deep` | 141.62 ns | 板の深い位置の注文キャンセル処理 |
 
+## Phase1からの変更点
+* BtreeMapからVec<Option>に変更（BtreeMapはキャッシュがヒープ内に分散しているため）
+* HashMapの削除
+* ヒープのメモリを確保（アロケーションを省く）
+* <br>　⇒'reference_price'と板の価格範囲を設定
+* 'Vec<idx>'とビットセットを用いてデータの場所を見つけるスピードを上げる
+* 
 ## 実行環境（Benchmarking Environment）
 
 ### Hardware & OS Architecture
