@@ -89,7 +89,7 @@ Benchmark
 | `sweep_10_levels_deep`| 895.39 ns | 板の深い位置における10レベルスウィープ |
 | `cancel_deep` | 141.62 ns | 板の深い位置の注文キャンセル処理 |
 
-## Benchmarking Environment
+## 実行環境（Benchmarking Environment）
 
 ### Hardware & OS Architecture
 Host Machine: ASUS Zenbook Series
