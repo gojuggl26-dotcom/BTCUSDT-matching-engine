@@ -72,4 +72,30 @@ Benchmark
 | `cancel` (注文取消) | 133.04 ns | 123.57 ns | -9.47 ns | メモリ最適化（アリーナ/Slab等）が完璧に機能。 |
 | `sweep_10_levels` (10価格連続約定) | 765.50 ns | 896.44 ns | +130.94 ns | 連続ループ処理が入っても 1μs 未満を死守。 |
 
+## Phase2
 
+### ベンチマーク結果
+
+## Performance Benchmarks
+
+| Benchmark Case | Execution Time (Median) | Description |
+| :--- | :---: | :--- |
+| `limit_resting` | 133.09 ns | 通常の指値注文（約定なし・板にのるだけ） |
+| `full_match` | 133.27 ns | 成行/指値注文による完全約定処理 |
+| `sweep_10_levels` | 871.91 ns | 10個の価格レベルにまたがる連続約定（スウィープ） |
+| `cancel` | 153.92 ns | 通常の注文キャンセル処理 |
+| `limit_resting_deep` | 537.72 ns | 板の深い位置（ベース価格から離れた位置）への指値注文 |
+| `full_match_deep` | 150.17 ns | 板の深い位置での完全約定処理 |
+| `sweep_10_levels_deep`| 895.39 ns | 板の深い位置における10レベルスウィープ |
+| `cancel_deep` | 141.62 ns | 板の深い位置の注文キャンセル処理 |
+
+## Benchmarking Environment
+
+### Hardware & OS Architecture
+Host Machine: ASUS Zenbook Series
+
+OS: Ubuntu 22.04 LTS (via WSL2 / Hyper-V Virtualization Platform)
+
+Rust Version: rustc 1.75+ (or latest stable)
+
+Optimization Profile: bench profile (Fully Optimized with --release equivalent flags, including aggressive function inlining, loop unrolling, and dead code elimination via LLVM)
