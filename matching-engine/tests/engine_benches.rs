@@ -75,40 +75,38 @@ fn bench_cancel(c: &mut Criterion) {
 
 // ─── 深い板（キャッシュ破壊） ────────────────────────────────────────────────
 //
-// 買い 10万件（4_000_001〜4_100_000）＋売り 10万件（6_000_001〜6_100_000）を
-// 事前に積み、合計 ~50MB の BTreeMap / HashMap をキャッシュに乗り切らない状態に
-// してから各操作を計測する。
+// PRICE_RANGE = 200_000, reference = 5_000_000 → 有効価格: 4_900_000〜5_099_999
+// 買い 80,000 件（4_910_000〜4_989_999）
+// 売り 80,000 件（5_010_000〜5_089_999）
+// マッチングゾーン: 4_990_000〜5_010_000
 
-const DEPTH: u64 = 100_000;
+const DEPTH_DEEP: u64 = 80_000;
 
 fn make_deep_engine() -> (MatchingEngine, u64) {
     let mut e = MatchingEngine::new();
     let mut id = 0u64;
-    for i in 0..DEPTH {
+    for i in 0..DEPTH_DEEP {
         id += 1;
-        e.submit(order(id, Side::Buy,  OrderType::Limit, 4_000_000 + i as i64, 100));
+        e.submit(order(id, Side::Buy,  OrderType::Limit, 4_910_000 + i as i64, 100));
     }
-    for i in 0..DEPTH {
+    for i in 0..DEPTH_DEEP {
         id += 1;
-        e.submit(order(id, Side::Sell, OrderType::Limit, 6_000_000 + i as i64, 100));
+        e.submit(order(id, Side::Sell, OrderType::Limit, 5_010_000 + i as i64, 100));
     }
     (e, id)
 }
 
-// 指値 resting: スプレッド内（5M 付近）への BTreeMap 挿入コスト
 fn bench_limit_resting_deep(c: &mut Criterion) {
     let (mut e, mut id) = make_deep_engine();
     c.bench_function("limit_resting_deep", |b| {
         b.iter(|| {
             id += 1;
-            // 1000 価格をサイクルして既存ノードへの push_back と新規ノード挿入を混在させる
             let price = 5_000_000 - (id % 1_000) as i64;
             black_box(e.submit(order(id, Side::Buy, OrderType::Limit, price, 10)))
         })
     });
 }
 
-// 完全約定: iter_custom でセットアップ（売り1件追加）を計測外に置く
 fn bench_full_match_deep(c: &mut Criterion) {
     let (mut e, mut id) = make_deep_engine();
     c.bench_function("full_match_deep", |b| {
@@ -127,7 +125,6 @@ fn bench_full_match_deep(c: &mut Criterion) {
     });
 }
 
-// 10 レベルスイープ: 計測前に消費分を補充、計測は sweep のみ
 fn bench_sweep_deep(c: &mut Criterion) {
     let (mut e, mut id) = make_deep_engine();
     c.bench_function("sweep_10_levels_deep", |b| {
@@ -148,7 +145,6 @@ fn bench_sweep_deep(c: &mut Criterion) {
     });
 }
 
-// キャンセル: 計測前に対象注文を追加、計測は cancel のみ
 fn bench_cancel_deep(c: &mut Criterion) {
     let (mut e, mut id) = make_deep_engine();
     c.bench_function("cancel_deep", |b| {
@@ -156,7 +152,7 @@ fn bench_cancel_deep(c: &mut Criterion) {
             let mut total = Duration::ZERO;
             for _ in 0..iters {
                 id += 1;
-                e.submit(order(id, Side::Sell, OrderType::Limit, 5_500_000, 10));
+                e.submit(order(id, Side::Sell, OrderType::Limit, 5_005_000, 10));
                 let cancel_id = OrderId(id);
                 let start = std::time::Instant::now();
                 black_box(e.cancel(cancel_id));

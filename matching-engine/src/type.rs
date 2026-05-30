@@ -6,6 +6,6 @@ pub struct Quantity(pub u64);
 /// 注文ID
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct OrderId(pub u64);
-/// 注文ID
+/// 時間
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct timestamp(pub u64);
